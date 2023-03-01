@@ -75,7 +75,7 @@
             }
             //console.log(obj);
 
-            signupData = await axios.post('127.0.0.1/3000/user/signup', obj);
+            signupData = await axios.post('http://127.0.0.1:3000/user/signup', obj);
 
             if (signupData.response === 201) {
                 console.log('Signup Succesful');
