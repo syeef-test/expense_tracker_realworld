@@ -8,7 +8,7 @@ exports.postSignup = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
-   
+
 
     const user = await User.findAll({
       attributes: ["email"],
@@ -35,4 +35,39 @@ exports.postSignup = async (req, res, next) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+
+exports.postLogin = async (req, res, next) => {
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
+
+
+    const user = await User.findAll({
+      attributes: ["email"],
+      where: { email: req.body.email },
+    });
+
+    if (typeof user !== "undefined" && user.length > 0) {
+
+      const checkEmailPwd = await User.findAll({
+        attributes: ['email', 'password'],
+        where: { email: email, password: password }
+      });
+
+      if (typeof checkEmailPwd !== "undefined" && checkEmailPwd.length > 0) {
+        res.status(200).json({ message: "User Login Succesful" });
+      } else {
+        res.status(401).json({ error: "User Not authorized" });
+      }
+    }
+    else {
+      res.status(404).json({ error: "User Does not exist" });
+    }
+  }
+  catch (err) {
+    console.log(err);
+  }
+
 };
