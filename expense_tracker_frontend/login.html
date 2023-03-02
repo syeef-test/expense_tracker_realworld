@@ -23,16 +23,10 @@
     <div class="container" align="center">
         <div class="row">
             <div>
-                <h2>Sign Up Page</h2>
+                <h2>Login Page</h2>
             </div>
             <div>
-                <form onsubmit="signup(event)" class="form-horizontal">
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Enter Your Name:</label>
-                            <input type="text" class="form-control" name="name" id="name" required />
-                        </div>
-                    </div>
+                <form onsubmit="login(event)" class="form-horizontal">
                     <div class="form-group">
                         <div class="mb-3">
                             <label for="email" class="form-label">Enter Your Email:</label>
@@ -47,12 +41,12 @@
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
-                            <input class="btn btn-success" type="submit" name="button" id="button" value="Sign Up" />
+                            <input class="btn btn-success" type="submit" name="button" id="button" value="Login" />
                         </div>
                     </div>
                 </form>
                 <div>
-                    <a href="login.html">Existing User Login</a>
+                    <a href="signup.html">New User Sign In</a>
                 </div>
             </div>
         </div>
@@ -61,26 +55,24 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    async function signup(event) {
+    async function login(event) {
         try {
             event.preventDefault();
-            const name = event.target.name.value;
             const email = event.target.email.value;
             const password = event.target.password.value;
 
             const obj = {
-                name: name,
                 email: email,
                 password: password
             }
-            //console.log(obj);
+            console.log(obj);
 
-            signupData = await axios.post('http://127.0.0.1:3000/user/signup', obj);
+            signupData = await axios.post('http://127.0.0.1:3000/user/login', obj);
 
-            if (signupData.response === 201) {
-                console.log('Signup Succesful');
+            if (signupData.response === 200) {
+                console.log(signupData);
             } else {
-                console.log('Signup Unsuccesful');
+                console.log(signupData);
             }
         } catch (error) {
             console.log(error);
