@@ -16,7 +16,7 @@ exports.postSignup = async (req, res, next) => {
     });
 
     if (typeof user !== "undefined" && user.length > 0) {
-      res.status(401).json({ message: "User Allready Exist with same email" });
+      res.status(401).json({ error: "User Allready Exist with same email" });
     } else {
       const insertData = await User.create({
         name: name,
@@ -26,14 +26,14 @@ exports.postSignup = async (req, res, next) => {
 
       if (insertData) {
         data = insertData.toJSON();
-        //console.log(data);
+        console.log(data);
         res.status(201).json({ message: "Sign Up Succesful", data: data });
       } else {
-        res.status(401).json({ message: "Sign Up unsuccesful" });
+        res.status(401).json({ error: "Sign Up unsuccesful" });
       }
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.toJSON());
   }
 };
 
