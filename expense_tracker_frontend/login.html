@@ -73,6 +73,7 @@
             // console.log(loginData.status);
              if (loginData.status === 200) {
                  alert(loginData.data.message);
+                 window.location = "expense.html";
              }
         } catch (error) {
             if(error){

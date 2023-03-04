@@ -21,7 +21,7 @@ exports.postSignup = async (req, res, next) => {
 
       const saltrounds = 10;
       bcrypt.hash(password, saltrounds, async (err, hash) => {
-        insertData = await User.create({ name, email, password: hash });
+        const insertData = await User.create({ name, email, password: hash });
         res.status(201).json({ message: "Sign Up Succesful", data: insertData.toJSON() });
       });
       // const insertData = await User.create({
