@@ -81,7 +81,10 @@
                 alert(signupData.data.message);
             }
         } catch (error) {
-            alert(error.response.data.error);
+            if(error){
+                alert(error.response.data.error);
+                console.log(error);
+            }
         }
     }
 </script>

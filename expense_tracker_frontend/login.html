@@ -75,8 +75,12 @@
                  alert(loginData.data.message);
              }
         } catch (error) {
-            alert(error.response.data.error);
-            //console.log(error);
+            if(error){
+                alert(error.response.data.error);
+                console.log(error);
+            }
+            
+            
             
         }
     }
