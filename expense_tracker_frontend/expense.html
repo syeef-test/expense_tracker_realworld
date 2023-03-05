@@ -42,8 +42,8 @@
                     <div class="form-group">
                         <div class="mb-3">
                             <label for="category" class="form-label">Choose Category:</label>
-                            <select class="form-control" name="category" id="category" required>
-                                <option value="fuel">Fuel</option>
+                            <select class="form-select" name="category" id="category" required>
+                                <option value="fuel" selected>Fuel</option>
                                 <option value="fruit">Fruit</option>
                                 <option value="travel">Travel</option>
                                 <option value="electricty">Electricty</option>
@@ -60,7 +60,7 @@
                     </div>
                 </form>
                 <div>
-                    <ul id="expense"></ul>
+                    <ul id="expense" class="list-group"></ul>
                 </div>
                
             </div>
@@ -108,7 +108,7 @@
       try {
         const parentElem = document.getElementById("expense");
         //const childElem = document.createElement('li');
-        const childElem = `<li id=${obj.id}>${obj.expenseamount}-${obj.category}-${obj.description}<button onclick=deleteExpense('${obj.id}')>Delete</button></li>`;
+        const childElem = `<li class="list-group-item" id=${obj.id}>${obj.expenseamount}-${obj.category}-${obj.description}&nbsp<button class="btn btn-danger" onclick=deleteExpense('${obj.id}')>Delete</button></li>`;
 
         parentElem.innerHTML = parentElem.innerHTML + childElem;
       } catch (error) {
@@ -128,6 +128,7 @@
 
     async function deleteExpense(expenseId) {
       try {
+        console.log(expenseId);
         const response = await axios.delete(
           `http://127.0.0.1:3000/expense/deleteExpense/${expenseId}`
         );
@@ -144,14 +145,14 @@
 
     window.addEventListener("DOMContentLoaded", async () => {
       try {
-        //network call to fetch data from crudcrud on page load method2
+        
         const response = await axios.get("http://127.0.0.1:3000/expense/get_expense");
 
         data = response.data;
-        console.log(data)
+        //console.log(data)
         if (response.data.data.length !== 0) {
           data.data.forEach((element) => {
-            console.log(element);
+            //console.log(element);
             showExpenseonScreen(element);
           });
         }

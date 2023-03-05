@@ -47,25 +47,19 @@ exports.getExpense = async (req, res, next) => {
     }
 }
 
-exports.deleteExpense = (req, res, next) => {
+exports.deleteExpense = async(req, res, next) => {
     try{
         const expenseId = req.params.id;
-        console.log(expenseId);
+        //console.log(expenseId);
+        const deleteData = await Expense.destroy({where:{id:expenseId}});
+        if(deleteData){
+            res.status(200).json({ message: "Deleted successfully" });
+        }else{
+            res.status(404).json({ message: "record not found" });
+        }
     }
     catch(error){
         console.log(error);
     }
-    // Expense
-    //   .destroy({
-    //     where: {
-    //       id: expenseId,
-    //     },
-    //   })
-      
-    //     if (deletedRecord === 1) {
-    //       res.status(200).json({ message: "Deleted successfully" });
-    //     } else {
-    //       res.status(404).json({ message: "record not found" });
-    //     }
      
   };
