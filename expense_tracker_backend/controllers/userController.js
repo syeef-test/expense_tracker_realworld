@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 exports.postSignup = async (req, res, next) => {
   try {
     //console.log(req.body);
@@ -43,6 +44,9 @@ exports.postSignup = async (req, res, next) => {
   }
 };
 
+function generateAccessToken(id){
+  return jwt.sign({userId:id},'secretkey');
+}
 
 exports.postLogin = async (req, res, next) => {
   try {
@@ -51,7 +55,7 @@ exports.postLogin = async (req, res, next) => {
 
 
     const user = await User.findAll({
-      attributes: ["email", "password"],
+      attributes: ["email", "password","id"],
       where: { email: req.body.email },
     });
 
@@ -62,7 +66,8 @@ exports.postLogin = async (req, res, next) => {
       const match = await bcrypt.compareSync(req.body.password,user[0].password);
       //console.log(match);
       if (match) {
-        res.status(200).json({ message: "User Login Succesful" });
+        //console.log(user[0].id);
+        res.status(200).json({ message: "User Login Succesful",token:generateAccessToken(user[0].id)});
       } else {
         res.status(401).json({ error: "User Not authorized" });
       }

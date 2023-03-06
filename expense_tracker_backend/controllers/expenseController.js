@@ -2,7 +2,8 @@ const Expense = require("../models/expenseModel");
 
 exports.addExpense = async (req, res, next) => {
   try {
-    console.log(req.body);
+    
+    
 
     const expenseamount = req.body.expsenseAmount;
     const description = req.body.description;
@@ -11,7 +12,8 @@ exports.addExpense = async (req, res, next) => {
     const insertData = await Expense.create({
         expenseamount:expenseamount,
         description:description,
-        category:category
+        category:category,
+        userId:req.user.id
     });
     console.log(insertData);
     if(insertData){
@@ -36,7 +38,8 @@ exports.deleteExpense = async(req,res,next)=>{
 
 exports.getExpense = async (req, res, next) => {
     try{
-       const expenseData = await Expense.findAll();
+        
+       const expenseData = await Expense.findAll({where:{userId:req.user.id}});
        if(expenseData){
         console.log(expenseData);
         res.status(200).json({ message: "Data Found", data: expenseData });
@@ -51,7 +54,7 @@ exports.deleteExpense = async(req, res, next) => {
     try{
         const expenseId = req.params.id;
         //console.log(expenseId);
-        const deleteData = await Expense.destroy({where:{id:expenseId}});
+        const deleteData = await Expense.destroy({where:{id:expenseId,userId:req.user.id}});
         if(deleteData){
             res.status(200).json({ message: "Deleted successfully" });
         }else{

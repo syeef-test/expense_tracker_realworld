@@ -2,164 +2,179 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-        crossorigin="anonymous"></script>
-    <style>
-        body {
-            padding-top: 50px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+  <style>
+    body {
+      padding-top: 50px;
+    }
+  </style>
 
 </head>
 
 <body>
-    <div class="container" align="center">
-        <div class="row">
-            <div>
-                <h2>Expense Page</h2>
+  <div class="container" align="center">
+    <div class="row">
+      <div>
+        <h2>Expense Page</h2>
+      </div>
+      <div>
+        <form onsubmit="addExpense(event)" class="form-horizontal">
+          <div class="form-group">
+            <div class="mb-3">
+              <label for="expenseAmount" class="form-label">Enter Expense Amount:</label>
+              <input type="number" class="form-control" name="expenseAmount" id="expenseAmount" required />
             </div>
-            <div>
-                <form onsubmit="addExpense(event)" class="form-horizontal">
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <label for="expenseAmount" class="form-label">Enter Expense Amount:</label>
-                            <input type="number" class="form-control" name="expenseAmount" id="expenseAmount" required />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Choose Description:</label>
-                            <input type="text" class="form-control" name="description" id="description" required />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <label for="category" class="form-label">Choose Category:</label>
-                            <select class="form-select" name="category" id="category" required>
-                                <option value="fuel" selected>Fuel</option>
-                                <option value="fruit">Fruit</option>
-                                <option value="travel">Travel</option>
-                                <option value="electricty">Electricty</option>
-                                <option value="food">Food</option>
-                                <option value="movie">Movie</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="mb-3">
-                            <input class="btn btn-success" type="submit" name="button" id="button" value="Add Expense" />
-                        </div>
-                    </div>
-                </form>
-                <div>
-                    <ul id="expense" class="list-group"></ul>
-                </div>
-               
+          </div>
+          <div class="form-group">
+            <div class="mb-3">
+              <label for="description" class="form-label">Choose Description:</label>
+              <input type="text" class="form-control" name="description" id="description" required />
             </div>
+          </div>
+          <div class="form-group">
+            <div class="mb-3">
+              <label for="category" class="form-label">Choose Category:</label>
+              <select class="form-select" name="category" id="category" required>
+                <option value="fuel" selected>Fuel</option>
+                <option value="fruit">Fruit</option>
+                <option value="travel">Travel</option>
+                <option value="electricty">Electricty</option>
+                <option value="food">Food</option>
+                <option value="movie">Movie</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mb-3">
+              <input class="btn btn-success" type="submit" name="button" id="button" value="Add Expense" />
+            </div>
+          </div>
+        </form>
+        <div>
+          <ul id="expense" class="list-group"></ul>
         </div>
+
+      </div>
     </div>
+  </div>
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    async function addExpense(event) {
-        try {
-            event.preventDefault();
-            const expsenseAmount = event.target.expenseAmount.value;
-            const description = event.target.description.value;
-            const category = event.target.category.value;
+  async function addExpense(event) {
+    try {
+      event.preventDefault();
+      const expsenseAmount = event.target.expenseAmount.value;
+      const description = event.target.description.value;
+      const category = event.target.category.value;
 
-            const obj = {
-                expsenseAmount:expsenseAmount,
-                description:description,
-                category:category
-            }
-            //console.log(obj);
-
-            const addExpense = await axios.post('http://127.0.0.1:3000/expense/addexpense', obj);
-            
-             if (addExpense.status === 201) {
-                 alert(addExpense.data.message);        
-                 showExpenseonScreen(addExpense.data.data);      
-             }
-        } catch (error) {
-            if(error){
-                //alert(error.response.data.error);
-                console.log(error);
-            }
-            
-            
-            
+      const obj = {
+        expsenseAmount: expsenseAmount,
+        description: description,
+        category: category
+      }
+      //console.log(obj);
+      const token = localStorage.getItem('token');
+      const addExpense = await axios.post('http://127.0.0.1:3000/expense/addexpense', obj, {
+        headers: {
+          'authorization': token
         }
-    }
+      });
 
-
-
-
-    function showExpenseonScreen(obj) {
-      try {
-        const parentElem = document.getElementById("expense");
-        //const childElem = document.createElement('li');
-        const childElem = `<li class="list-group-item" id=${obj.id}>${obj.expenseamount}-${obj.category}-${obj.description}&nbsp<button class="btn btn-danger" onclick=deleteExpense('${obj.id}')>Delete</button></li>`;
-
-        parentElem.innerHTML = parentElem.innerHTML + childElem;
-      } catch (error) {
+      if (addExpense.status === 201) {
+        alert(addExpense.data.message);
+        showExpenseonScreen(addExpense.data.data);
+      }
+    } catch (error) {
+      if (error) {
+        //alert(error.response.data.error);
         console.log(error);
       }
-    }
 
-    function deleteExpenseFromScreen(expenseId) {
-      try {
-        const parentElem = document.getElementById("expense");
-        const childElem = document.getElementById(expenseId);
-        parentElem.removeChild(childElem); //element removed from parent element
-      } catch (error) {
-        console.log(error);
-      }
-    }
 
-    async function deleteExpense(expenseId) {
-      try {
-        console.log(expenseId);
-        const response = await axios.delete(
-          `http://127.0.0.1:3000/expense/deleteExpense/${expenseId}`
-        );
-        if (response.status === 200) {
-          //console.log(response.status);
-          deleteExpenseFromScreen(expenseId);
-        } else {
-          console.log("Not Deleted");
+
+    }
+  }
+
+
+
+
+  function showExpenseonScreen(obj) {
+    try {
+      const parentElem = document.getElementById("expense");
+      //const childElem = document.createElement('li');
+      const childElem = `<li class="list-group-item" id=${obj.id}>${obj.expenseamount}-${obj.category}-${obj.description}&nbsp<button class="btn btn-danger" onclick=deleteExpense('${obj.id}')>Delete</button></li>`;
+
+      parentElem.innerHTML = parentElem.innerHTML + childElem;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function deleteExpenseFromScreen(expenseId) {
+    try {
+      const parentElem = document.getElementById("expense");
+      const childElem = document.getElementById(expenseId);
+      parentElem.removeChild(childElem); //element removed from parent element
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function deleteExpense(expenseId) {
+    try {
+      console.log(expenseId);
+      const token = localStorage.getItem('token');
+      const response = await axios.delete(
+        `http://127.0.0.1:3000/expense/deleteExpense/${expenseId}`,
+        {
+          headers: {
+            'authorization': token
+          }
         }
-      } catch (error) {
-        console.log(error);
+      );
+      if (response.status === 200) {
+        //console.log(response.status);
+        deleteExpenseFromScreen(expenseId);
+      } else {
+        console.log("Not Deleted");
       }
+    } catch (error) {
+      console.log(error);
     }
+  }
 
-    window.addEventListener("DOMContentLoaded", async () => {
-      try {
-        
-        const response = await axios.get("http://127.0.0.1:3000/expense/get_expense");
-
-        data = response.data;
-        //console.log(data)
-        if (response.data.data.length !== 0) {
-          data.data.forEach((element) => {
-            //console.log(element);
-            showExpenseonScreen(element);
-          });
+  window.addEventListener("DOMContentLoaded", async () => {
+    try {
+      const token = localStorage.getItem('token');
+      //const response = await axios.get("http://127.0.0.1:3000/expense/get_expense",{headers:{"Authorization":token}});
+      const response = await axios.get("http://127.0.0.1:3000/expense/get_expense", {
+        headers: {
+          'authorization': token
         }
-      } catch (error) {
-        console.log(error);
+      });
+
+      data = response.data;
+      //console.log(data)
+      if (response.data.data.length !== 0) {
+        data.data.forEach((element) => {
+          //console.log(element);
+          showExpenseonScreen(element);
+        });
       }
-    });
+    } catch (error) {
+      console.log(error);
+    }
+  });
 </script>
 
 </html>

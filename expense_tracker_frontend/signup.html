@@ -79,6 +79,7 @@
 
             if (signupData.status === 201) {
                 alert(signupData.data.message);
+                window.location = "login.html";
             }
         } catch (error) {
             if(error){
