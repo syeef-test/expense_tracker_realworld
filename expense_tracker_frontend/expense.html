@@ -21,6 +21,9 @@
 
 <body>
   <div class="container" align="center">
+    <div align="right">
+      <button id="prem_tag" name="prem_tag" class="btn btn-warning">Premium User</button>
+    </div>
     <div class="row">
       <div>
         <h2>Expense Page</h2>
@@ -58,16 +61,17 @@
               <input class="btn btn-success" type="submit" name="button" id="button" value="Add Expense" />
             </div>
           </div>
-          <div class="form-group">
-            <div class="mb-3">
-              <input class="btn btn-warning" type="button" name="rzp-button1" id="rzp-button1" value="Buy Premium" />
-              <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-              <ul id="listOfExpenses">
 
-              </ul>
-            </div>
-          </div>
         </form>
+        <div class="form-group" id="payment" name="payment">
+          <div class="mb-3">
+            <input class="btn btn-warning" type="button" name="rzp-button1" id="rzp-button1" value="Buy Premium" />
+            <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+            <ul id="listOfExpenses">
+
+            </ul>
+          </div>
+        </div>
         <div>
           <ul id="expense" class="list-group"></ul>
         </div>
@@ -79,6 +83,46 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    try {
+      const token = localStorage.getItem('token');
+
+      
+
+      const [responseExpense, responsePremiuemuser] = await Promise.all([
+        axios.get("http://127.0.0.1:3000/expense/get_expense", {
+          headers: {
+            'authorization': token
+          }
+        }),
+        axios.get("http://127.0.0.1:3000/expense/isPremiuemUser", {
+          headers: {
+            'authorization': token
+          }
+        })
+      ]);
+
+      if (responseExpense !== null && responsePremiuemuser !== null) {
+        const data = responseExpense.data;
+        const data2 = responsePremiuemuser.data;
+        show_hide_preUser(data2.isPremiumuser);
+        if (response.data.data.length !== 0) {
+          data.data.forEach((element) => {
+            //console.log(element);
+            showExpenseonScreen(element);
+          });
+        }
+      }
+
+      
+
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+
   async function addExpense(event) {
     try {
       event.preventDefault();
@@ -141,7 +185,7 @@
 
   async function deleteExpense(expenseId) {
     try {
-      console.log(expenseId);
+      //console.log(expenseId);
       const token = localStorage.getItem('token');
       const response = await axios.delete(
         `http://127.0.0.1:3000/expense/deleteExpense/${expenseId}`,
@@ -162,28 +206,25 @@
     }
   }
 
-  window.addEventListener("DOMContentLoaded", async () => {
-    try {
-      const token = localStorage.getItem('token');
-      //const response = await axios.get("http://127.0.0.1:3000/expense/get_expense",{headers:{"Authorization":token}});
-      const response = await axios.get("http://127.0.0.1:3000/expense/get_expense", {
-        headers: {
-          'authorization': token
-        }
-      });
 
-      data = response.data;
-      //console.log(data)
-      if (response.data.data.length !== 0) {
-        data.data.forEach((element) => {
-          //console.log(element);
-          showExpenseonScreen(element);
-        });
+
+
+  function show_hide_preUser(isPremiumuser) {
+    try {
+      //alert(isPremiumuser);
+      if (isPremiumuser === true) {
+        const childElem = document.getElementById('rzp-button1');
+        childElem.parentNode.removeChild(childElem);
+        document.getElementById('prem_tag').style.display = "block";
+      } else {
+        document.getElementById('prem_tag').style.display = "none";
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.log(error);
     }
-  });
+  }
+
 
   document.getElementById("rzp-button1").onclick = async function (e) {
     const token = localStorage.getItem('token');
@@ -192,7 +233,7 @@
         'authorization': token
       }
     });
-    console.log(response);
+    //console.log(response);
 
     var options =
     {
@@ -200,14 +241,17 @@
       "order_id": response.data.order.id,  //for one time payment
       //this handler function will handle the success payment
       "handler": async function (response) {
-          //console.log(response.razorpay_order_id,response.razorpay_payment_id);
-          await axios.post('http://127.0.0.1:3000/purchase/updatetransactionstatus',
-          { order_id:response.razorpay_order_id, payment_id: response.razorpay_payment_id }, {
+
+        await axios.post('http://127.0.0.1:3000/purchase/updatetransactionstatus',
+          { order_id: response.razorpay_order_id, payment_id: response.razorpay_payment_id }, {
           headers: {
             'authorization': token
           }
         });
+        show_hide_preUser(true);
         alert('You are a Premium User Now');
+
+
       }
     };
 
@@ -216,9 +260,19 @@
     e.preventDefault();
 
 
-    rzp1.on('payment.failed',function(response){
-      console.log(response);
-      alert('Something Went Wrong');
+    rzp1.on('payment.failed', async function (response) {
+      //console.log(response);
+      //alert(response.error.code);
+      //alert(response.error.metadata.order_id);
+      //alert(response.error.metadata.payment_id);
+
+      alert('Something Went Wrong Please Try Again Later');
+      await axios.post('http://127.0.0.1:3000/purchase/updatetransactionstatus',
+        { order_id: response.error.metadata.order_id, payment_id: response.error.metadata.payment_id, error_code: response.error.code }, {
+        headers: {
+          'authorization': token
+        }
+      });
     });
 
   }

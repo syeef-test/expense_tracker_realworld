@@ -2,9 +2,6 @@ const Expense = require("../models/expenseModel");
 
 exports.addExpense = async (req, res, next) => {
   try {
-    
-    
-
     const expenseamount = req.body.expsenseAmount;
     const description = req.body.description;
     const category = req.body.category;
@@ -41,8 +38,8 @@ exports.getExpense = async (req, res, next) => {
         
        const expenseData = await Expense.findAll({where:{userId:req.user.id}});
        if(expenseData){
-        console.log(expenseData);
-        res.status(200).json({ message: "Data Found", data: expenseData });
+        //console.log(req.user.ispremiumuser);
+        res.status(200).json({ message: "Data Found", data: expenseData});
        }
     }
     catch(error){
@@ -65,4 +62,16 @@ exports.deleteExpense = async(req, res, next) => {
         console.log(error);
     }
      
+  };
+
+
+  exports.isPremiuemUser = (req,res,next)=>{
+    try{
+        //console.log(req.user.ispremiumuser);
+        res.status(200).json({ isPremiumuser:req.user.ispremiumuser});
+
+    }catch(error){
+        console.log(error);
+    }
+
   };

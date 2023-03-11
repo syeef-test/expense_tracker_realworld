@@ -75,6 +75,8 @@
                  alert(loginData.data.message);
                  console.log(loginData.data.token);
                  localStorage.setItem('token',loginData.data.token);
+                
+                 
                  window.location = "expense.html";
              }
         } catch (error) {

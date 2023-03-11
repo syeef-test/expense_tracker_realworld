@@ -1,7 +1,8 @@
 const express = require("express");
 const sequelize = require("./util/database");
 const bodyParser =require('body-parser');
-
+const dotenv = require('dotenv');
+dotenv.config();
 const Expense = require('./models/expenseModel');
 const User = require('./models/userModel');
 const Order = require("./models/orderModel");

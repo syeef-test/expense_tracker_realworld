@@ -2,6 +2,8 @@ const User = require("../models/userModel");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+
+
 const Razorpay = require('razorpay');
 
 const Order = require('../models/orderModel');
@@ -10,8 +12,8 @@ const Order = require('../models/orderModel');
 exports.purchasepremium = async (req, res, next) => {
     try {
         var rzp = new Razorpay({
-            key_id: "rzp_test_N0VU6kdK6Yy6Fy",
-            key_secret: "8V0skZ0cfaKmgFfo9z3EIlCH"
+            key_id: process.env.RAZORPAY_KEY_ID,
+            key_secret: process.env.RAZORPAY_KEY_SECRET
         });
 
         const amount = 2500;
@@ -36,44 +38,36 @@ exports.purchasepremium = async (req, res, next) => {
 
 exports.updateTransaction = async (req, res, next) => {
     try {
-        const { payment_id, order_id } = req.body;
-        console.log(payment_id, order_id);
-
-
-        // Order.findOne({ where: { orderid: order_id } }).then(order => {
-
-        //     order.update({where:{ paymentid: payment_id, status: 'SUCCESFUL' }}).then(() => {
-        //         req.user.update({ ispremiumuser: true }).then(() => {
-        //             return res.status(202).json({ success: true, message: 'Transaction Succesful' });
-        //         }).catch((err) => {
-        //             throw new Error(err);
-        //         });
-        //     }).catch(err => {
-        //         throw new Error(err);
-        //     });
-        // }).catch(err=>{
-        //     throw new Error(err);
-        // });
+        const { payment_id, order_id, error_code } = req.body;
+        //console.log(payment_id, order_id, error_code);
 
         const order = await Order.findOne({ where: { orderid: order_id } });
         if (order !== null) {
-            const [orderData, userData] = await Promise.all([
-                Order.update({ status: 'SUCCESFUL', paymentid: payment_id }, { where: { orderid: order_id } }),
-                req.user.update({ ispremiumuser: true })
-            ]);
+            if (error_code === null || error_code === undefined) {
 
-            // console.log("order:",orderData);
-            // console.log("user:",userData);
-            if (orderData !== null && userData !== null) {
-                return res.status(202).json({ success: true, message: 'Transaction Succesful' });
+                // const [orderData, userData] = await Promise.all([
+                //     Order.update({ status: 'SUCCESFUL', paymentid: payment_id }, { where: { orderid: order_id } }),
+                //     req.user.update({ ispremiumuser: true })
+                // ]);
+                // if (orderData !== null && userData !== null) {
+                //     return res.status(202).json({ success: true, message: 'Transaction Succesful' });
+                // }
+
+                const promise1 = Order.update({ status: 'SUCCESFUL', paymentid: payment_id }, { where: { orderid: order_id } });
+                const promise2 = req.user.update({ ispremiumuser: true });
+
+                Promise.all([promise1, promise2]).then(() => {
+                    return res.status(202).json({ success: true, message: 'Transaction Succesful' });
+                }).catch(error => {
+                    throw new Error(error);
+                })
+
+            } else {
+                const orderData = await Order.update({ status: 'FAILED', paymentid: payment_id }, { where: { orderid: order_id } });
+                return res.status(401).json({ success: false, message: 'Transaction Unsuccesful' });
             }
 
-
-
         }
-
-
-
 
     } catch (err) {
         throw new Error(err);

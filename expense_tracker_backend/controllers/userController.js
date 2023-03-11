@@ -55,7 +55,7 @@ exports.postLogin = async (req, res, next) => {
 
 
     const user = await User.findAll({
-      attributes: ["email", "password","id"],
+      attributes: ["email", "password","id","ispremiumuser"],
       where: { email: req.body.email },
     });
 
@@ -66,7 +66,7 @@ exports.postLogin = async (req, res, next) => {
       const match = await bcrypt.compareSync(req.body.password,user[0].password);
       //console.log(match);
       if (match) {
-        //console.log(user[0].id);
+        console.log(user[0]);
         res.status(200).json({ message: "User Login Succesful",token:generateAccessToken(user[0].id)});
       } else {
         res.status(401).json({ error: "User Not authorized" });
@@ -95,3 +95,5 @@ exports.postLogin = async (req, res, next) => {
   }
 
 };
+
+
