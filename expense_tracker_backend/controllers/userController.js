@@ -44,8 +44,9 @@ exports.postSignup = async (req, res, next) => {
   }
 };
 
-function generateAccessToken(id){
-  return jwt.sign({userId:id},'secretkey');
+exports.generateAccessToken = (id, name, ispremiuemuser) => {
+  //console.log(id,name,ispremiuemuser);
+  return jwt.sign({ userId: id, name: name, ispremiuemuser: ispremiuemuser }, process.env.TOKEN_SECRET);
 }
 
 exports.postLogin = async (req, res, next) => {
@@ -55,7 +56,7 @@ exports.postLogin = async (req, res, next) => {
 
 
     const user = await User.findAll({
-      attributes: ["email", "password","id","ispremiumuser"],
+      attributes: ["email", "password", "id", "ispremiumuser", "name"],
       where: { email: req.body.email },
     });
 
@@ -63,25 +64,17 @@ exports.postLogin = async (req, res, next) => {
 
       //console.log(user[0].password);
       //used bycryptjs insted of bycrypt as bycrypt is not instaling
-      const match = await bcrypt.compareSync(req.body.password,user[0].password);
+      const match = await bcrypt.compareSync(req.body.password, user[0].password);
       //console.log(match);
       if (match) {
-        console.log(user[0]);
-        res.status(200).json({ message: "User Login Succesful",token:generateAccessToken(user[0].id)});
+        //console.log(user[0]);
+        //console.log(generateAccessToken(user[0].id,user[0].name,user[0].ispremiumuser));
+        res.status(200).json({ message: "User Login Succesful", token: this.generateAccessToken(user[0].id, user[0].name, user[0].ispremiumuser) });
       } else {
         res.status(401).json({ error: "User Not authorized" });
       }
 
-      // const checkEmailPwd = await User.findAll({
-      //   attributes: ['email', 'password'],
-      //   where: { email: email, password: password }
-      // });
 
-      // if (typeof checkEmailPwd !== "undefined" && checkEmailPwd.length > 0) {
-      //   res.status(200).json({ message: "User Login Succesful" });
-      // } else {
-      //   res.status(401).json({ error: "User Not authorized" });
-      // }
 
 
 

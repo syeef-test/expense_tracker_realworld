@@ -10,7 +10,7 @@ router.delete('/deleteExpense/:id', authenticate.authenticate, expenseController
 router.get('/get_expense', authenticate.authenticate, expenseController.getExpense);
 
 
-router.get('/isPremiuemUser',authenticate.authenticate,expenseController.isPremiuemUser);
+//router.get('/isPremiuemUser',authenticate.authenticate,expenseController.isPremiuemUser);
 
 
 module.exports = router;

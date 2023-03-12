@@ -65,13 +65,13 @@ exports.deleteExpense = async(req, res, next) => {
   };
 
 
-  exports.isPremiuemUser = (req,res,next)=>{
-    try{
-        //console.log(req.user.ispremiumuser);
-        res.status(200).json({ isPremiumuser:req.user.ispremiumuser});
+//   exports.isPremiuemUser = (req,res,next)=>{
+//     try{
+//         //console.log(req.user.ispremiumuser);
+//         res.status(200).json({ isPremiumuser:req.user.ispremiumuser});
 
-    }catch(error){
-        console.log(error);
-    }
+//     }catch(error){
+//         console.log(error);
+//     }
 
-  };
+//   };

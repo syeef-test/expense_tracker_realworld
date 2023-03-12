@@ -2,6 +2,8 @@ const User = require("../models/userModel");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const userController = require('../controllers/userController');
+
 
 
 const Razorpay = require('razorpay');
@@ -41,6 +43,8 @@ exports.updateTransaction = async (req, res, next) => {
         const { payment_id, order_id, error_code } = req.body;
         //console.log(payment_id, order_id, error_code);
 
+        const userId = req.user.id;
+
         const order = await Order.findOne({ where: { orderid: order_id } });
         if (order !== null) {
             if (error_code === null || error_code === undefined) {
@@ -57,7 +61,7 @@ exports.updateTransaction = async (req, res, next) => {
                 const promise2 = req.user.update({ ispremiumuser: true });
 
                 Promise.all([promise1, promise2]).then(() => {
-                    return res.status(202).json({ success: true, message: 'Transaction Succesful' });
+                    return res.status(202).json({ success: true, message: 'Transaction Succesful',token:userController.generateAccessToken(userId,undefined,true)});
                 }).catch(error => {
                     throw new Error(error);
                 })
