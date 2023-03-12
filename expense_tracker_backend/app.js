@@ -10,6 +10,7 @@ const Order = require("./models/orderModel");
 const userRoute = require("./routes/userRoute");
 const expenseRoute = require("./routes/expenseRoute");
 const purchaseRoute = require("./routes/purchaseRoute");
+const premiuemRoute = require("./routes/premiuemRoute");
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(bodyParser.json());
 app.use('/user',userRoute);
 app.use('/expense',expenseRoute);
 app.use('/purchase',purchaseRoute);
+app.use('/premiuem',premiuemRoute);
 
 
 User.hasMany(Expense);

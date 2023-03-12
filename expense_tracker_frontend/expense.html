@@ -21,9 +21,7 @@
 
 <body>
   <div class="container" align="center">
-    <div align="right" id="message">
-      
-    </div>
+    
     <div class="row">
       <div>
         <h2>Expense Page</h2>
@@ -75,8 +73,12 @@
         <div>
           <ul id="expense" class="list-group"></ul>
         </div>
+        <div align="right" id="message">
+          
+        </div>
+        <div id="leaderboard" name="leaderboard" class="list-group">
 
-      </div>
+        </div>
     </div>
   </div>
 
@@ -86,7 +88,7 @@
 
 
   function showPremiumuserMessage(){
-      document.getElementById('rzp-button1').style.visibility = 'hidden';
+        document.getElementById('rzp-button1').style.visibility = 'hidden';
         document.getElementById('message').innerHTML = 'You are a premiuem user';
   }
 
@@ -105,10 +107,11 @@
       const token = localStorage.getItem('token');
 
       const decodeToken = parseJwt(token);
-      console.log(decodeToken);
+      //console.log(decodeToken);
       const ispremiuemuser = decodeToken.ispremiuemuser;
       if(ispremiuemuser){
         showPremiumuserMessage();
+        showLeaderboard();
       }
 
       const responseExpense = await axios.get("http://127.0.0.1:3000/expense/get_expense", {
@@ -220,6 +223,28 @@
     }
   }
 
+  function showLeaderboard(){
+    const inputElement = document.createElement("input");
+    inputElement.type = "button";
+    inputElement.value = "Show Leaderboard";
+    inputElement.onclick = async()=>{
+      const token = localStorage.getItem('token');
+      const userLeaderBoardArray = await axios.get('http://127.0.0.1:3000/premiuem/showLeaderBoard',{
+      headers: {
+        'authorization': token
+      }
+    });
+      console.log(userLeaderBoardArray);
+
+      var leaderboardElem = document.getElementById('leaderboard');
+      leaderboardElem.innerHTML += '<h1>Leader Board</h1>';
+      userLeaderBoardArray.data.forEach((userDetails)=>{
+        leaderboardElem.innerHTML += `<li>Name - ${userDetails.name} Total Expense - ${userDetails.total_cost}`;
+      });
+      
+    }
+    document.getElementById("message").appendChild(inputElement);
+  }
 
 
 
@@ -252,6 +277,7 @@
         alert('You are a Premium User Now');
         showPremiumuserMessage();
         localStorage.setItem('token',res.data.token);
+        showLeaderboard();
 
 
       }
