@@ -11,6 +11,7 @@ const userRoute = require("./routes/userRoute");
 const expenseRoute = require("./routes/expenseRoute");
 const purchaseRoute = require("./routes/purchaseRoute");
 const premiuemRoute = require("./routes/premiuemRoute");
+const passwordRoute = require("./routes/passwordRoute");
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use('/user',userRoute);
 app.use('/expense',expenseRoute);
 app.use('/purchase',purchaseRoute);
 app.use('/premiuem',premiuemRoute);
+app.use('/password',passwordRoute);
 
 
 User.hasMany(Expense);
