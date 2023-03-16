@@ -6,6 +6,7 @@ dotenv.config();
 const Expense = require('./models/expenseModel');
 const User = require('./models/userModel');
 const Order = require("./models/orderModel");
+const forgotPassword = require("./models/forgotPasswordModel");
 
 const userRoute = require("./routes/userRoute");
 const expenseRoute = require("./routes/expenseRoute");
@@ -16,6 +17,7 @@ const passwordRoute = require("./routes/passwordRoute");
 const app = express();
 
 const cors = require("cors");
+
 
 app.use(cors());
 
@@ -34,6 +36,9 @@ Expense.belongsTo(User,{constraints:true,onDelete:'CASCADE'});
 
 User.hasMany(Order);
 Order.belongsTo(User);
+
+User.hasMany(forgotPassword);
+forgotPassword.belongsTo(User);
 
 
 
