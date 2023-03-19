@@ -3,10 +3,12 @@ const sequelize = require("./util/database");
 const bodyParser =require('body-parser');
 const dotenv = require('dotenv');
 dotenv.config();
+
 const Expense = require('./models/expenseModel');
 const User = require('./models/userModel');
 const Order = require("./models/orderModel");
 const forgotPassword = require("./models/forgotPasswordModel");
+const downloadExpense = require("./models/expenseDownloadModel");
 
 const userRoute = require("./routes/userRoute");
 const expenseRoute = require("./routes/expenseRoute");
@@ -39,6 +41,9 @@ Order.belongsTo(User);
 
 User.hasMany(forgotPassword);
 forgotPassword.belongsTo(User);
+
+User.hasMany(downloadExpense);
+downloadExpense.belongsTo(User);
 
 
 

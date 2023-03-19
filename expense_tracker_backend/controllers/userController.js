@@ -1,6 +1,12 @@
 const User = require("../models/userModel");
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
+
+
+
+
 exports.postSignup = async (req, res, next) => {
   try {
     //console.log(req.body);
@@ -25,19 +31,7 @@ exports.postSignup = async (req, res, next) => {
         const insertData = await User.create({ name, email, password: hash });
         res.status(201).json({ message: "Sign Up Succesful", data: insertData.toJSON() });
       });
-      // const insertData = await User.create({
-      //   name: name,
-      //   email: email,
-      //   password: password,
-      // });
-
-      // if (insertData) {
-      //   //data = insertData.toJSON();
-      //   //console.log(data);
-      //   res.status(201).json({ message: "Sign Up Succesful", data: data });
-      // } else {
-      //   res.status(401).json({ error: "Sign Up unsuccesful" });
-      // }
+      
     }
   } catch (error) {
     console.log(error.toJSON());
@@ -47,7 +41,7 @@ exports.postSignup = async (req, res, next) => {
 exports.generateAccessToken = (id, name, ispremiuemuser) => {
   //console.log(id,name,ispremiuemuser);
   return jwt.sign({ userId: id, name: name, ispremiuemuser: ispremiuemuser }, process.env.TOKEN_SECRET);
-}
+};
 
 exports.postLogin = async (req, res, next) => {
   try {
@@ -74,10 +68,6 @@ exports.postLogin = async (req, res, next) => {
         res.status(401).json({ error: "User Not authorized" });
       }
 
-
-
-
-
     }
     else {
       res.status(404).json({ error: "User Does not exist" });
@@ -88,5 +78,8 @@ exports.postLogin = async (req, res, next) => {
   }
 
 };
+
+
+
 
 
