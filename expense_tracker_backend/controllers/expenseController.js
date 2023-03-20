@@ -63,13 +63,36 @@ exports.addExpense = async (req, res, next) => {
 
 exports.getExpense = async (req, res, next) => {
   try {
-    const expenseData = await Expense.findAll({
+    // const expenseData = await Expense.findAll({
+    //   where: { userId: req.user.id },
+    // });
+    // if (expenseData) {
+    //   //console.log(req.user.ispremiumuser);
+    //   res.status(200).json({ message: "Data Found", data: expenseData });
+    // }
+    const page =+ req.query.page || 1;
+    const ITEMS_PER_PAGE = 10;
+    let countExpenses;
+    
+    const expenseData = await Expense.findAndCountAll({
       where: { userId: req.user.id },
+      offset: (page-1)*ITEMS_PER_PAGE,
+      limit: ITEMS_PER_PAGE
     });
-    if (expenseData) {
-      //console.log(req.user.ispremiumuser);
-      res.status(200).json({ message: "Data Found", data: expenseData });
-    }
+    // console.log(count);
+    // console.log(rows);
+    //res.status(200).json({ message: "Data Found", data: expenseData });
+    countExpenses = expenseData.count;
+    res.status(200).json({
+      expenses:expenseData.rows,
+      currentPage:page,
+      hasNextPage:ITEMS_PER_PAGE * page < countExpenses,
+      nextPage:page + 1,
+      hasPreviousPage:page > 1,
+      previousPage:page - 1,
+      lastPage:Math.ceil(countExpenses/ITEMS_PER_PAGE)
+    })
+
   } catch (error) {
     console.log(error);
   }

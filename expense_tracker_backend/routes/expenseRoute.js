@@ -26,6 +26,5 @@ router.get(
   expenseController.downloadExpense
 );
 
-//router.get('/isPremiuemUser',authenticate.authenticate,expenseController.isPremiuemUser);
 
 module.exports = router;

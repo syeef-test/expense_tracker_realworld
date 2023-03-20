@@ -79,9 +79,8 @@
         <div>
           <ul id="expense" class="list-group"></ul>
         </div>
-        <div align="right" id="message">
-
-        </div>
+        <div class="container" id="pagination" name="pagination"></div>
+        <div align="right" id="message"></div>
         <div id="leaderboard" name="leaderboard" class="list-group">
 
         </div>
@@ -112,9 +111,7 @@
   window.addEventListener("DOMContentLoaded", async () => {
     try {
       const token = localStorage.getItem('token');
-
       const decodeToken = parseJwt(token);
-      //console.log(decodeToken);
       const ispremiuemuser = decodeToken.ispremiuemuser;
       if (ispremiuemuser) {
         showPremiumuserMessage();
@@ -123,31 +120,105 @@
         document.getElementById("downloadexpense").disabled = true;
       }
 
-      const responseExpense = await axios.get("http://127.0.0.1:3000/expense/get_expense", {
+      const page = 1;
+
+      const responseExpense = await axios.get(`http://127.0.0.1:3000/expense/get_expense?page=${page}`, {
         headers: {
           'authorization': token
-        }
+        },
       });
 
-
-
       if (responseExpense !== null) {
-        const data = responseExpense.data;
-        if (responseExpense.data.data.length !== 0) {
-          data.data.forEach((element) => {
-            //console.log(element);
+        if (responseExpense.data.expenses.length !== 0) {
+          responseExpense.data.expenses.forEach((element) => {
             showExpenseonScreen(element);
           });
+          showPagination(responseExpense.data);
         }
       }
-
-
+      
+      //console.log(responseExpense);
 
     } catch (error) {
       console.log(error);
     }
   });
 
+  function removeCurrentPageExpenseFromScreen() {
+    try {
+      const childElem = document.getElementsByClassName('list-group-item');
+      const elements = Array.from(document.getElementsByClassName('list-group-item'));
+      elements.forEach((element) => {
+        //console.log(element.id);
+        deleteExpenseFromScreen(element.id);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function showPagination({
+    currentPage,
+    hasNextPage,
+    nextPage,
+    hasPreviousPage,
+    previousPage,
+    lastPage
+  }) {
+    try {
+      pagination.innerHTML = '';
+      if (hasPreviousPage) {
+        const btn2 = document.createElement('button');
+        btn2.innerHTML = previousPage;
+        btn2.addEventListener('click', () => {
+          getExpenses(previousPage);
+        });
+        pagination.appendChild(btn2);
+      }
+
+      const btn1 = document.createElement('button');
+      btn1.innerHTML = `<h3>${currentPage}</h3>`;
+      btn1.addEventListener('click', () => getExpenses(currentPage));
+      pagination.appendChild(btn1);
+
+      if (hasNextPage) {
+        const btn3 = document.createElement('button');
+        btn3.innerHTML = nextPage;
+        btn3.addEventListener('click', () => {
+          getExpenses(nextPage);
+        });
+        pagination.appendChild(btn3);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+
+  async function getExpenses(page) {
+    try {
+      alert(page);
+      const token = localStorage.getItem('token');
+      const responseExpense = await axios.get(`http://127.0.0.1:3000/expense/get_expense?page=${page}`, {
+        headers: {
+          'authorization': token
+        },
+      });
+      console.log(responseExpense);
+      if (responseExpense !== null) {
+        removeCurrentPageExpenseFromScreen();
+        if (responseExpense.data.expenses.length !== 0) {
+          responseExpense.data.expenses.forEach((element) => {
+            showExpenseonScreen(element);
+          });
+          showPagination(responseExpense.data);
+        }
+      }
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   async function addExpense(event) {
     try {
@@ -178,14 +249,8 @@
         //alert(error.response.data.error);
         console.log(error);
       }
-
-
-
     }
   }
-
-
-
 
   function showExpenseonScreen(obj) {
     try {
@@ -260,11 +325,6 @@
 
   }
 
-
-
-
-
-
   document.getElementById("rzp-button1").onclick = async function (e) {
     const token = localStorage.getItem('token');
     const response = await axios.get('http://127.0.0.1:3000/purchase/premiummembership', {
@@ -301,7 +361,6 @@
     rzp1.open();
     e.preventDefault();
 
-
     rzp1.on('payment.failed', async function (response) {
       //console.log(response);
       //alert(response.error.code);
@@ -326,24 +385,11 @@
       //console.log(downloadLink);
       if (downloadLink.status === 201) {
         const data = downloadLink.data;
-
-        // if (downloadLink.data.data.length !== 0) {
-        //   data.data.forEach((element) => {
-        //     console.log(element);
-        //     //alert(element);
-        //   });
-        // }
-
-
         var downloadElem = document.getElementById('allDownloads');
         downloadElem.innerHTML += '<h1>All Downloads</h1>';
         downloadLink.data.data.forEach((downloadDetails) => {
           downloadElem.innerHTML += `<ol>Url - <a href='${downloadDetails.expenseurl}'>Click To Download</a> Date - ${downloadDetails.createdAt}</ol>`;
         });
-
-
-
-
         //old
         // var a = document.createElement("a");
         // alert(downloadLink.data.fileURL);
@@ -359,12 +405,7 @@
   }
 
 
-  function createDownloadLink() {
-    var a = document.createElement("a");
-    a.href = downloadLink.data.fileURL;
-    a.download = 'myexpense.csv';
-    a.click();
-  }
+
 </script>
 
 </html>
