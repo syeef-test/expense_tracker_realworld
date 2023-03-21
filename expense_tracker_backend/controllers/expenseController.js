@@ -71,7 +71,10 @@ exports.getExpense = async (req, res, next) => {
     //   res.status(200).json({ message: "Data Found", data: expenseData });
     // }
     const page =+ req.query.page || 1;
-    const ITEMS_PER_PAGE = 10;
+    
+    const ITEMS_PER_PAGE = Number(req.query.expenseNumber) || 10;
+    console.log(req.query.expenseNumber);
+    
     let countExpenses;
     
     const expenseData = await Expense.findAndCountAll({
@@ -81,6 +84,7 @@ exports.getExpense = async (req, res, next) => {
     });
     // console.log(count);
     // console.log(rows);
+    
     //res.status(200).json({ message: "Data Found", data: expenseData });
     countExpenses = expenseData.count;
     res.status(200).json({
