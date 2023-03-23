@@ -3,6 +3,8 @@ const sequelize = require("./util/database");
 const bodyParser =require('body-parser');
 const dotenv = require('dotenv');
 dotenv.config();
+const helmet = require('helmet');
+
 
 const Expense = require('./models/expenseModel');
 const User = require('./models/userModel');
@@ -18,10 +20,13 @@ const passwordRoute = require("./routes/passwordRoute");
 
 const app = express();
 
+app.use(helmet());
+//app.use(helmet.hidePoweredBy());
+
 const cors = require("cors");
-
-
 app.use(cors());
+
+
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
@@ -31,6 +36,12 @@ app.use('/expense',expenseRoute);
 app.use('/purchase',purchaseRoute);
 app.use('/premiuem',premiuemRoute);
 app.use('/password',passwordRoute);
+
+
+
+
+app.disable('x-powered-by'); // for disable the X-Powered-By header.
+
 
 
 User.hasMany(Expense);
@@ -47,10 +58,18 @@ downloadExpense.belongsTo(User);
 
 
 
-sequelize
-  .sync()
-  //.sync({force:true})
-  .then((result) => {
-    app.listen(3000);
-  })
-  .catch((err) => console.log(err));
+// sequelize
+//   .sync()
+//   //.sync({force:true})
+//   .then((result) => {
+//     app.listen(3000);
+//   })
+//   .catch((err) => console.log(err));
+
+
+const dbcon =async()=>{
+  await sequelize.sync();
+};
+if(dbcon){
+  app.listen(process.env.PORT || 3000);
+}

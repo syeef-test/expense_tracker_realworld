@@ -26,8 +26,8 @@ exports.forgotPassword = async (req, res, next) => {
 
         const tranEmailApi = new Sib.TransactionalEmailsApi();
         const sender = {
-            email: "kazisyeef@gmail.com",
-            name: "Kazi",
+            email: process.env.SENDER_EMAIL,
+            name: process.env.SENDER_NAME,
         };
         const receivers = [
             {
@@ -80,11 +80,6 @@ exports.checkPasswordLinkStatus = async (req, res, next) => {
             
             //console.log("link active",data.isactive);
             if (data.isactive) {
-                //console.log('http://127.0.0.1:5500/expense_tracker_frontend/resetPassword.html');
-                //res.send({redirect_path: "http://127.0.0.1:5500/expense_tracker_frontend/resetPassword.html"});
-                // res.writeHead(301, { Location: "http://127.0.0.1:5500/expense_tracker_frontend/resetPassword.html"});
-                // return res.end();
-
                 const a = await forgotPassword.update(
                     { isactive: false },
                     { where: { id: uuid },transaction: t },

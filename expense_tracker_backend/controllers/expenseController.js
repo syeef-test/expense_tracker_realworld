@@ -52,24 +52,11 @@ exports.addExpense = async (req, res, next) => {
   }
 };
 
-// exports.deleteExpense = async(req,res,next)=>{
-//     try{
-//         console.log(req.params);
-//     }
-//     catch(error){
-//         console.log(error);
-//     }
-// }
+
 
 exports.getExpense = async (req, res, next) => {
   try {
-    // const expenseData = await Expense.findAll({
-    //   where: { userId: req.user.id },
-    // });
-    // if (expenseData) {
-    //   //console.log(req.user.ispremiumuser);
-    //   res.status(200).json({ message: "Data Found", data: expenseData });
-    // }
+    
     const page =+ req.query.page || 1;
     
     const ITEMS_PER_PAGE = Number(req.query.expenseNumber) || 10;
@@ -82,10 +69,7 @@ exports.getExpense = async (req, res, next) => {
       offset: (page-1)*ITEMS_PER_PAGE,
       limit: ITEMS_PER_PAGE
     });
-    // console.log(count);
-    // console.log(rows);
     
-    //res.status(200).json({ message: "Data Found", data: expenseData });
     countExpenses = expenseData.count;
     res.status(200).json({
       expenses:expenseData.rows,
@@ -144,16 +128,7 @@ exports.deleteExpense = async (req, res, next) => {
   }
 };
 
-//   exports.isPremiuemUser = (req,res,next)=>{
-//     try{
-//         //console.log(req.user.ispremiumuser);
-//         res.status(200).json({ isPremiumuser:req.user.ispremiumuser});
 
-//     }catch(error){
-//         console.log(error);
-//     }
-
-//   };
 
 exports.downloadExpense = async (req, res, next) => {
   try {

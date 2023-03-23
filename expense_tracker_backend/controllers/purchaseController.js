@@ -49,14 +49,6 @@ exports.updateTransaction = async (req, res, next) => {
         if (order !== null) {
             if (error_code === null || error_code === undefined) {
 
-                // const [orderData, userData] = await Promise.all([
-                //     Order.update({ status: 'SUCCESFUL', paymentid: payment_id }, { where: { orderid: order_id } }),
-                //     req.user.update({ ispremiumuser: true })
-                // ]);
-                // if (orderData !== null && userData !== null) {
-                //     return res.status(202).json({ success: true, message: 'Transaction Succesful' });
-                // }
-
                 const promise1 = Order.update({ status: 'SUCCESFUL', paymentid: payment_id }, { where: { orderid: order_id } });
                 const promise2 = req.user.update({ ispremiumuser: true });
 

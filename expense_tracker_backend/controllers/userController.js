@@ -4,9 +4,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 
-
-
-
 exports.postSignup = async (req, res, next) => {
   try {
     //console.log(req.body);

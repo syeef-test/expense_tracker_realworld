@@ -66,24 +66,38 @@
             <input class="btn btn-warning" type="button" name="rzp-button1" id="rzp-button1" value="Buy Premium" />
             <button class="btn btn-primary" onclick="download()" id="downloadexpense">Download File</button>
             <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-            <ul id="listOfExpenses">
-
-            </ul>
+            <ul id="listOfExpenses"></ul>
           </div>
+
           <div class="mb-3" id="download">
-            <ul id="allDownloads">
-
-            </ul>
+            <ul id="allDownloads"></ul>
           </div>
         </div>
-        <div>
-          <ul id="expense" class="list-group"></ul>
-        </div>
-        <div class="container" id="pagination" name="pagination"></div>
-        <div align="right" id="message"></div>
-        <div id="leaderboard" name="leaderboard" class="list-group">
 
-        </div>
+        <section>
+          <div>
+            <!-- <div class="container w-25">
+                <select class="form-select  h-50 w-50" aria-label="" onselect="setPagesize(event)">
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="30">30</option>
+                  <option value="40">40</option>
+                </select>
+              </div> -->
+            <div>
+              <div class="container" id="paginationSize" name="paginationSize"></div>
+              <ul id="expense" class="list-group"></ul>
+            </div>
+            <div class="container" id="pagination" name="pagination"></div>
+
+          </div>
+        </section>
+
+        <section>
+          <div align="right" id="message"></div>
+          <div id="leaderboard" name="leaderboard" class="list-group"></div>
+        </section>
+
       </div>
     </div>
 
@@ -93,9 +107,13 @@
 
 
   function showPremiumuserMessage() {
-    document.getElementById('rzp-button1').style.visibility = 'hidden';
-    document.getElementById("downloadexpense").disabled = false;
-    document.getElementById('message').innerHTML = 'You are a premiuem user';
+    try {
+      document.getElementById('rzp-button1').style.visibility = 'hidden';
+      document.getElementById("downloadexpense").disabled = false;
+      document.getElementById('message').innerHTML = 'You are a premiuem user';
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   function parseJwt(token) {
@@ -121,8 +139,11 @@
       }
 
       const page = 1;
+      createExpenseNumberDropdown();
 
-      const responseExpense = await axios.get(`http://127.0.0.1:3000/expense/get_expense?page=${page}`, {
+      const expenseNumber = localStorage.getItem('expenseNumber');
+
+      const responseExpense = await axios.get(`http://127.0.0.1:3000/expense/get_expense?page=${page}&expenseNumber=${expenseNumber}`, {
         headers: {
           'authorization': token
         },
@@ -136,7 +157,7 @@
           showPagination(responseExpense.data);
         }
       }
-      
+
       //console.log(responseExpense);
 
     } catch (error) {
@@ -144,18 +165,7 @@
     }
   });
 
-  function removeCurrentPageExpenseFromScreen() {
-    try {
-      const childElem = document.getElementsByClassName('list-group-item');
-      const elements = Array.from(document.getElementsByClassName('list-group-item'));
-      elements.forEach((element) => {
-        //console.log(element.id);
-        deleteExpenseFromScreen(element.id);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
+
 
   function showPagination({
     currentPage,
@@ -195,6 +205,35 @@
 
   }
 
+  function createExpenseNumberDropdown() {
+    //create a selectbox for pagesize
+    const myParent = document.getElementById('paginationSize');
+    //Create array of options to be added
+    const array = ["5", "10", "20", "30", "40"];
+
+    //Create and append select list
+    const selectList = document.createElement("select");
+    selectList.id = "mySelect";
+    selectList.addEventListener('change', () => {
+      changePagesize(event);
+    });
+    myParent.appendChild(selectList);
+
+    //Create and append the options
+    for (var i = 0; i < array.length; i++) {
+      var option = document.createElement("option");
+      option.value = array[i];
+      option.text = array[i];
+      selectList.appendChild(option);
+    }
+  }
+
+  function changePagesize(event) {
+    //alert(event.target.value);
+    const expenseNumber = event.target.value;
+    localStorage.setItem('expenseNumber', expenseNumber);
+  }
+
   async function getExpenses(page) {
     try {
       alert(page);
@@ -214,7 +253,7 @@
           showPagination(responseExpense.data);
         }
       }
-      
+
     } catch (error) {
       console.log(error);
     }
@@ -288,10 +327,24 @@
       );
       if (response.status === 200) {
         //console.log(response.status);
+        alert("Expense Deleted Succesfully");
         deleteExpenseFromScreen(expenseId);
       } else {
         console.log("Not Deleted");
       }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function removeCurrentPageExpenseFromScreen() {
+    try {
+      const childElem = document.getElementsByClassName('list-group-item');
+      const elements = Array.from(document.getElementsByClassName('list-group-item'));
+      elements.forEach((element) => {
+        //console.log(element.id);
+        deleteExpenseFromScreen(element.id);
+      });
     } catch (error) {
       console.log(error);
     }
