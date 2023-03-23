@@ -4,7 +4,9 @@ const bodyParser =require('body-parser');
 const dotenv = require('dotenv');
 dotenv.config();
 const helmet = require('helmet');
-
+const morgan = require('morgan');
+const path = require('path');
+const fs = require('fs');
 
 const Expense = require('./models/expenseModel');
 const User = require('./models/userModel');
@@ -22,6 +24,9 @@ const app = express();
 
 app.use(helmet());
 //app.use(helmet.hidePoweredBy());
+//const accessLogStream = fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'});
+//app.use(morgan('combined',{stream:accessLogStream}));
+
 
 const cors = require("cors");
 app.use(cors());
@@ -40,7 +45,7 @@ app.use('/password',passwordRoute);
 
 
 
-app.disable('x-powered-by'); // for disable the X-Powered-By header.
+
 
 
 
