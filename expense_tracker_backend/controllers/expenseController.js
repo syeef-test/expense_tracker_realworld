@@ -45,7 +45,7 @@ exports.addExpense = async (req, res, next) => {
   } catch (error) {
     if (t) {
       await t.rollback();
-      res.status(401).json({ error: "Expense Not Added" });
+      res.status(401).json({ error: "Expense Not Added",success:false});
     }
 
     console.log(error);
@@ -118,11 +118,11 @@ exports.deleteExpense = async (req, res, next) => {
 
     await t.commit();
     //throw new Error();
-    res.status(200).json({ message: "Deleted successfully" });
+    res.status(200).json({ message: "Deleted successfully",success:true});
   } catch (error) {
     if (t) {
       await t.rollback();
-      res.status(404).json({ message: "record not found" });
+      res.status(404).json({ message: "record not found",success:false});
     }
     console.log(error);
   }
@@ -139,7 +139,9 @@ exports.downloadExpense = async (req, res, next) => {
     if (isPremiuemuser.ispremiumuser) {
       const expenses = await UserServices.getExpenses(req);
       const stringifiedExpenses = JSON.stringify(expenses);
+      //console.log(stringifiedExpenses);
       const filename = `Expense${userId}/${new Date()}.txt`;
+      
       const fileURL = await S3Service.uploadToS3(stringifiedExpenses,filename);
       //console.log(fileURL);
 
@@ -168,10 +170,11 @@ exports.downloadExpense = async (req, res, next) => {
       //res.status(201).json({fileURL,success:true});
       //res.status(201).json({message:"Download Link Generated"});
     } else {
-      res.status(401).json({ message: "User is not Authorized" });
+      res.status(401).json({ message: "User is not Authorized",success:false});
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ fileURL: "", success: false, error: error });
+    //res.status(500).json({ fileURL: "", success: false, error: error });
+    res.status(500).json({ fileURL: "", success: false});
   }
 };

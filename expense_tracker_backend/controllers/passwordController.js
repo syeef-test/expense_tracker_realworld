@@ -54,13 +54,13 @@ exports.forgotPassword = async (req, res, next) => {
 
         if (sendMail) {
             //console.log(sendMail);
-            res.status(200).json({ message: "Reset Email Link Sent To Your Email" });
+            res.status(200).json({ message: "Reset Email Link Sent To Your Email",success:true});
         }
 
     } catch (error) {
         if (t) {
             await t.rollback();
-            return res.status(401).json({ message: "Reset Email  Unsuccesful , No User exist with this email Id" });
+            return res.status(401).json({ message: "Reset Email  Unsuccesful , No User exist with this email Id",success:false});
         }
         console.log(error);
     }
@@ -106,7 +106,7 @@ exports.checkPasswordLinkStatus = async (req, res, next) => {
     } catch (err) {
         if (t) {
             await t.rollback();
-            res.status(401).json({ message: "No Email Link Send" });
+            res.status(401).json({ message: "No Email Link Send",success:false});
         }
         console.log(err);
     }
@@ -125,7 +125,7 @@ exports.updatepassword = async (req, res, next) => {
                 bcrypt.hash(newpassword, saltrounds, async (err, hash) => {
                     const updateUserData = await User.update({password: hash},{where:{id:userData.id},transaction:t});
                     await t.commit();
-                    res.status(201).json({message: 'Successfuly update the new password'});
+                    res.status(201).json({message: 'Successfuly update the new password',success:true});
                 });
             }else{
                 return res.status(404).json({ error: 'No user Exists', success: false});
@@ -134,7 +134,7 @@ exports.updatepassword = async (req, res, next) => {
     } catch (err) {
         if (t) {
             await t.rollback();
-            return res.status(403).json({ error, success: false } );
+            return res.status(403).json({ message:'Some error occured please try again leter', success: false } );
         }
        
         console.log(err);

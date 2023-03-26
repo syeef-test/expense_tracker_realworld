@@ -68,24 +68,19 @@
                 email: email,
                 password: password
             }
-            //console.log(obj);
-
+            
             const loginData = await axios.post('http://127.0.0.1:3000/user/login', obj);
-            // console.log(loginData);
-            // console.log(loginData.data.message);
             // console.log(loginData.status);
              if (loginData.status === 200) {
                  alert(loginData.data.message);
-                 console.log(loginData.data.token);
+                 //console.log(loginData.data.token);
                  localStorage.setItem('token',loginData.data.token);
-                
-                 
                  window.location = "expense.html";
              }
         } catch (error) {
             if(error){
-                alert(error.response.data.error);
-                console.log(error);
+                alert(error.response.data.message);
+                //console.log(error);
             }
             
             

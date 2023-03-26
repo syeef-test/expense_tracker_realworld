@@ -179,6 +179,7 @@
       pagination.innerHTML = '';
       if (hasPreviousPage) {
         const btn2 = document.createElement('button');
+        btn2.className = "btn btn-info";
         btn2.innerHTML = previousPage;
         btn2.addEventListener('click', () => {
           getExpenses(previousPage);
@@ -187,12 +188,14 @@
       }
 
       const btn1 = document.createElement('button');
-      btn1.innerHTML = `<h3>${currentPage}</h3>`;
+      btn1.className = "btn btn-info";
+      btn1.innerHTML = `<h4>${currentPage}</h4>`;
       btn1.addEventListener('click', () => getExpenses(currentPage));
       pagination.appendChild(btn1);
 
       if (hasNextPage) {
         const btn3 = document.createElement('button');
+        btn3.className = "btn btn-info";
         btn3.innerHTML = nextPage;
         btn3.addEventListener('click', () => {
           getExpenses(nextPage);
@@ -354,6 +357,7 @@
     try {
       const inputElement = document.createElement("input");
       inputElement.type = "button";
+      inputElement.className = "btn btn-primary";
       inputElement.value = "Show Leaderboard";
       inputElement.onclick = async () => {
         const token = localStorage.getItem('token');
@@ -362,19 +366,61 @@
             'authorization': token
           }
         });
-        console.log(userLeaderBoardArray);
-
-        var leaderboardElem = document.getElementById('leaderboard');
-        leaderboardElem.innerHTML += '<h1>Leader Board</h1>';
-        userLeaderBoardArray.data.forEach((userDetails) => {
-          leaderboardElem.innerHTML += `<li>Name - ${userDetails.name} Total Expense - ${userDetails.totalExpense}`;
-        });
+        //console.log(userLeaderBoardArray);
+         createLeadboardElement(userLeaderBoardArray);
+        // userLeaderBoardArray.data.forEach((userDetails) => {
+        //   //leaderboardElem.innerHTML += `<ul>Name - ${userDetails.name} Total Expense - ${userDetails.totalExpense}</ul>`;
+        //   const childElem = `<ul class="list-group-item leadboard" id="${'leadboard'+userDetails.id}">Name-${userDetails.name}&nbsp&nbspTotalExpense - ${userDetails.totalExpense}</ul>`;
+        //   leaderboardElem.innerHTML = leaderboardElem.innerHTML + childElem;
+        // });
+        
 
       }
       document.getElementById("message").appendChild(inputElement);
     } catch (error) {
       console.log(error);
     }
+
+  }
+  function createLeadboardElement(userLeaderBoardArray){
+    //console.log(userLeaderBoardArray);
+    const dataArray = userLeaderBoardArray.data;
+    const parentElement = document.getElementById('leaderboard');
+    // parentElement.innerHTML += '<h1>Leader Board</h1>';
+
+   
+    const prevLielement = document.getElementsByClassName('list-group-item leadboard');
+    const prevhElement = document.getElementsByClassName('leadboardHeaderElement');
+    //console.log(prevhElement);
+    
+    //remove header previous
+    while(prevLielement.length > 0){
+      prevLielement[0].parentNode.removeChild(prevLielement[0]);
+      console.log("element removed");
+    }
+    //remove ul previous
+    while(prevhElement.length>0){
+      prevhElement[0].parentNode.removeChild(prevhElement[0]);
+      console.log("header element removed");
+    }
+
+    const hElement = document.createElement('h1');
+    hElement.className = "leadboardHeaderElement";
+    hElement.id="leadboardHeaderElement";
+    hElement.innerHTML += 'Leader Board';
+
+    
+
+    const liElement = document.createElement('ul');
+    liElement.className = "leadboardElement";
+    liElement.id="leadboardElement";
+    
+    dataArray.forEach((element)=>{
+      var childElem = `<ul class="list-group-item leadboard" id="${'leadboard'+element.id}">Name-${element.name}&nbsp&nbspTotalExpense - ${element.totalExpense}</ul>`;
+      liElement.innerHTML = liElement.innerHTML + childElem;
+    });
+    parentElement.appendChild(hElement);
+    parentElement.appendChild(liElement);
 
   }
 
